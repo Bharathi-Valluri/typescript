@@ -74,28 +74,12 @@ const updateRecord = async (req: Request, res: Response) => {
 }
 const deleteRecord = async (req: Request, res: Response) => {
   try {
-    let resp
-    if (req.body && Array.isArray(req.body)) {
-      resp = await record.deleteMany(req.body).toArray()
-
-      res.json({
-        message: 'all records fetched successfully'
-      })
-    } else {
-      resp = await record.deleteOne(req.body).toArray()
-    }
-
+    await record.deleteOne(req.body)
     res.json({
-      message: 'based on request body data fetched successfully',
-
-      resp: resp
+      message: 'record deleted successfully'
     })
-  } catch (err) {
-    console.log(err)
-    res.status(400).json({
-      response: err,
-      message: 'Error finding record.'
-    })
+  } catch (error) {
+    console.log(error)
   }
 }
 
