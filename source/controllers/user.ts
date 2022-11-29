@@ -39,7 +39,7 @@ const find = async (req: Request, res: Response) => {
       resp = await record.find(req.body).toArray()
     }
 
-    res.json({
+    res.status(200).json({
       message: 'based on request body data fetched successfully',
 
       resp: resp
@@ -54,32 +54,40 @@ const find = async (req: Request, res: Response) => {
 }
 const updateRecord = async (req: Request, res: Response) => {
   try {
-    const resp = await record.updateOne(
-      { name: req.body.name },
-
-      { $set: req.body }
-    )
-
-    res.json({
-      message: 'updated successfully',
-      resp: resp
-    })
+    let records = await record.find(req.body.where).toArray()
+    console.log(records)
+    for (const rec of records) {
+      console.log(record)
+      await record.findOneAndUpdate(
+        { Designation: rec.Designation },
+        { $set: req.body.data }
+      )
+      res.status(200).json({
+        message: 'updated successfully'
+      })
+    }
   } catch (error) {
     console.log(error)
     res.status(400).json({
-      response: err,
+      response: null,
       message: 'Error finding record.'
     })
   }
 }
 const deleteRecord = async (req: Request, res: Response) => {
   try {
-    await record.deleteOne(req.body)
+    let resp = await record.deleteMany(req.body.where)
+    console.log('resp: ', resp)
     res.json({
+      response: resp,
       message: 'record deleted successfully'
     })
   } catch (error) {
     console.log(error)
+    res.status(400).json({
+      response: null,
+      message: 'Failed to delete the record'
+    })
   }
 }
 
