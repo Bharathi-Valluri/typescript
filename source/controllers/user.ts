@@ -27,28 +27,21 @@ const add = async (req: Request, res: Response) => {
 }
 
 const find = async (req: Request, res: Response) => {
+  console.log('body:', req.body)
+  req.body = req.body ? req.body : {}
   try {
-    let resp
-    if (req.body && Array.isArray(req.body)) {
-      resp = await record.find().toArray()
-
-      res.json({
-        message: 'all records fetched successfully'
-      })
-    } else {
-      resp = await record.find(req.body).toArray()
-    }
+    let resp = await record.find(req.body).toArray()
+    console.log('response:', resp)
 
     res.status(200).json({
-      message: 'based on request body data fetched successfully',
-
-      resp: resp
+      response: resp,
+      message: 'fetched successfully'
     })
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    console.log(error)
     res.status(400).json({
-      response: err,
-      message: 'Error finding record.'
+      response: null,
+      message: 'unable to fetch'
     })
   }
 }

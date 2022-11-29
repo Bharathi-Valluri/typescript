@@ -2,12 +2,12 @@
 import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import * as dotenv from 'dotenv'
+const PORT = 5060
+import dotenv from 'dotenv'
 dotenv.config()
 import { router } from '../source/routes/routes'
 // import { db } from './config/db'
 const app = express()
-const PORT = 5080
 //var util = require('util')
 //var encoder = new util.TextEncoder('utf-8')
 app.use(bodyParser.urlencoded({ extended: true }))
