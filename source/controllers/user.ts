@@ -28,20 +28,44 @@ const add = async (req: Request, res: Response) => {
 
 const find = async (req: Request, res: Response) => {
   console.log('body:', req.body)
-  req.body = req.body ? req.body : {}
+  req.body = req.body ? req.body : ' '
   try {
-    let resp = await record.find(req.body).toArray()
+    let resp
+    let count
+    if ((req.body.skip || req.body.skip === 0) && req.body.take) {
+      resp = await record
+        .find(req.body.where)
+        .limit(req.body.take)
+        .skip(req.body.skip)
+        .toArray()
+      count = await record.countDocuments()
+      console.log(count)
+      console.log('if block code is executing expectedly')
+    } else if (req.body.Designation || req.body.Name) {
+      resp = await record
+        .find({
+          $or: [
+            { Designation: { $regex: '.*' + req.body.Designation + '.*' } },
+            { Name: { $regex: '.*' + req.body.Name + '.*' } }
+          ]
+        })
+        .limit(req.body.take)
+        .skip(req.body.skip)
+        .toArray()
+      count = await record.countDocuments()
+    } else {
+      resp = await record.find(req.body).toArray()
+    }
     console.log('response:', resp)
-
-    res.status(200).json({
+    res.status(201).json({
       response: resp,
-      message: 'fetched successfully'
+      message: 'Data fetched from DB successfully',
+      count: count
     })
   } catch (error) {
-    console.log(error)
     res.status(400).json({
-      response: null,
-      message: 'unable to fetch'
+      error: error,
+      message: 'unable to fetch the records from database'
     })
   }
 }
@@ -56,12 +80,12 @@ const updateRecord = async (req: Request, res: Response) => {
         { $set: req.body.data }
       )
       res.status(200).json({
-        message: 'updated successfully'
+        message: 'Records updated successfully'
       })
     }
   } catch (error) {
     console.log(error)
-    res.status(400).json({
+    res.status(404).json({
       response: null,
       message: 'Error finding record.'
     })
@@ -71,13 +95,13 @@ const deleteRecord = async (req: Request, res: Response) => {
   try {
     let resp = await record.deleteMany(req.body.where)
     console.log('resp: ', resp)
-    res.json({
+    res.status(202).json({
       response: resp,
       message: 'record deleted successfully'
     })
   } catch (error) {
     console.log(error)
-    res.status(400).json({
+    res.status(404).json({
       response: null,
       message: 'Failed to delete the record'
     })
