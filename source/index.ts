@@ -1,20 +1,15 @@
-// import { Console } from 'console'
-import express, { Request, Response } from 'express'
+import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-const PORT = 5060
+const PORT = 6000
 import dotenv from 'dotenv'
 dotenv.config()
 import { router } from '../source/routes/routes'
-// import { db } from './config/db'
 const app = express()
-//var util = require('util')
-//var encoder = new util.TextEncoder('utf-8')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
-// app.use('/',router)
-async function run () {
+function run () {
   app.use('/', router)
 
   app.listen(PORT, (): void => {

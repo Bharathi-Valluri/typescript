@@ -1,12 +1,12 @@
 import express from 'express'
-import { add, find, updateRecord, deleteRecord } from '../controllers/user'
+import * as user from '../controllers/user'
 const router = express.Router()
 
-router.post('/saveData', add)
-router.get('/find', find)
+router.post('/saveData', user.add)
+router.get('/find', user.find)
 // router.get('/posts/:id', userController.getPost);
-router.put('/updating', updateRecord)
-router.delete('/remove', deleteRecord)
+router.put('/updating', user.updateRecord)
+router.delete('/remove', user.deleteRecord)
 // router.post('/posts', controller.addPost);
 
 export { router }
