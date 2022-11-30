@@ -41,7 +41,7 @@ const find = async (req: Request, res: Response) => {
       count = await record.countDocuments()
       console.log(count)
       console.log('if block code is executing expectedly')
-    } else if (req.body.Designation || req.body.Name) {
+    } else if ((req.body.remove || req.body.remove === 0) && req.body.pages) {
       resp = await record
         .find({
           $or: [
@@ -49,8 +49,8 @@ const find = async (req: Request, res: Response) => {
             { Name: { $regex: '.*' + req.body.Name + '.*' } }
           ]
         })
-        .limit(req.body.take)
-        .skip(req.body.skip)
+        .limit(req.body.pages)
+        .skip(req.body.remove)
         .toArray()
       count = await record.countDocuments()
     } else {
